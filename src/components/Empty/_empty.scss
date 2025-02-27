@@ -17,3 +17,26 @@
         font-size: $font-size-5;
     }
 }
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  text-align: center;
+
+  .empty-icon {
+    margin-bottom: 16px;
+    
+    svg {
+      color: #9A9FA5;
+    }
+  }
+
+  p {
+    color: #6F767E;
+    font-size: 14px;
+    margin: 0;
+  }
+}

@@ -6,11 +6,14 @@ import Empty from "../../components/Empty/Empty";
 import CreateGroupModal from "../../components/CreateGroupModal/CreateGroupModal";
 import EditGroupModal from "../../components/EditGroupModal/EditGroupModal";
 import EditMemberModal from '../../components/EditMemberModal/EditMemberModal';
+import GroupMemberModal from "../../components/GroupMemberModal/GroupMemberModal";
 import { useAuth } from "../../contexts/AuthContext";
 import { getGroups, getMembers, deleteGroup, deleteMember } from "../../firebase";
 import { ReactComponent as DeleteIcon } from "../../assets/delete.svg";
 import { ReactComponent as EditIcon } from "../../assets/edit.svg";
+import { ReactComponent as AddIcon } from "../../assets/add.svg";
 import { Member, Group, TableStructure } from "../../types";
+import Button from "../../components/Button/Button";
 
 interface Props {
     open: boolean
@@ -27,6 +30,7 @@ const Team: React.FC<Props> = ({ open, setOpen, pageTab }) => {
     const [showCreateGroupModal, setShowCreateGroupModal] = useState(false);
     const [showEditGroupModal, setShowEditGroupModal] = useState(false);
     const [showEditMemberModal, setShowEditMemberModal] = useState(false);
+    const [showAddMemberModal, setShowAddMemberModal] = useState(false);
     const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
     const [selectedMember, setSelectedMember] = useState<Member | null>(null);
 
@@ -57,7 +61,11 @@ const Team: React.FC<Props> = ({ open, setOpen, pageTab }) => {
         
         try {
             const fetchedMembers = await getMembers();
-            setMembers(fetchedMembers);
+            // Filtrējam, lai rādītu tikai tos lietotājus, kas ir grupās
+            const membersInGroups = fetchedMembers.filter(member => 
+                groups.some(group => group.members.includes(member.email))
+            );
+            setMembers(membersInGroups);
         } catch (err) {
             console.error('Error fetching members:', err);
             setError('Neizdevās ielādēt dalībniekus');
@@ -68,7 +76,8 @@ const Team: React.FC<Props> = ({ open, setOpen, pageTab }) => {
         const loadData = async () => {
             setLoading(true);
             if (pageTab === 0) {
-                await fetchMembers();
+                await fetchGroups(); // Vispirms iegūstam grupas
+                await fetchMembers(); // Tad iegūstam dalībniekus
             } else {
                 await fetchGroups();
             }
@@ -82,6 +91,7 @@ const Team: React.FC<Props> = ({ open, setOpen, pageTab }) => {
         try {
             await deleteGroup(groupId);
             await fetchGroups();
+            await fetchMembers(); // Atjaunojam arī dalībnieku sarakstu
         } catch (err) {
             console.error('Error deleting group:', err);
             setError('Neizdevās dzēst grupu');
@@ -103,6 +113,14 @@ const Team: React.FC<Props> = ({ open, setOpen, pageTab }) => {
         if (group) {
             setSelectedGroup(group);
             setShowEditGroupModal(true);
+        }
+    };
+
+    const handleAddMember = (groupId: string) => {
+        const group = groups.find(g => g.id === groupId);
+        if (group) {
+            setSelectedGroup(group);
+            setShowAddMemberModal(true);
         }
     };
 
@@ -128,6 +146,13 @@ const Team: React.FC<Props> = ({ open, setOpen, pageTab }) => {
             created: new Date(group.createdAt.seconds * 1000).toLocaleDateString(),
             actions: (
                 <div className="group-actions">
+                    <button
+                        className="icon-button add"
+                        onClick={() => handleAddMember(group.id)}
+                        title="Pievienot dalībnieku"
+                    >
+                        <AddIcon />
+                    </button>
                     <button
                         className="icon-button edit"
                         onClick={() => handleEditGroup(group.id)}
@@ -192,7 +217,7 @@ const Team: React.FC<Props> = ({ open, setOpen, pageTab }) => {
             {pageTab === 0 ? (
                 <>
                     {members.length === 0 ? (
-                        <div className="no-data">No members found</div>
+                        <Empty message="Nav pievienotu dalībnieku" />
                     ) : (
                         <Table 
                             structure={membersStructure} 
@@ -204,7 +229,7 @@ const Team: React.FC<Props> = ({ open, setOpen, pageTab }) => {
             ) : (
                 <>
                     {groups.length === 0 ? (
-                        <div className="no-data">No groups found</div>
+                        <Empty message="Nav izveidotu grupu" />
                     ) : (
                         <Table 
                             structure={groupsStructure} 
@@ -214,6 +239,20 @@ const Team: React.FC<Props> = ({ open, setOpen, pageTab }) => {
                     )}
                 </>
             )}
+            
+            {selectedGroup && (
+                <GroupMemberModal
+                    open={showAddMemberModal}
+                    setOpen={setShowAddMemberModal}
+                    groupId={selectedGroup.id}
+                    currentMembers={selectedGroup.members}
+                    onMemberAdded={() => {
+                        fetchGroups();
+                        fetchMembers();
+                    }}
+                />
+            )}
+            
             {selectedMember && (
                 <EditMemberModal
                     open={showEditMemberModal}
@@ -222,6 +261,7 @@ const Team: React.FC<Props> = ({ open, setOpen, pageTab }) => {
                     onMemberUpdated={handleMemberUpdated}
                 />
             )}
+            
             {selectedGroup && (
                 <EditGroupModal
                     open={showEditGroupModal}

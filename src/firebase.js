@@ -200,10 +200,10 @@ export const createGroup = async (groupData) => {
   try {
     const docRef = await addDoc(collection(db, "groups"), {
       name: groupData.name,
-      members: [groupData.createdBy],
+      members: groupData.members,
       createdBy: groupData.createdBy,
       createdAt: new Date(),
-      memberCount: 1
+      memberCount: groupData.members.length
     });
     return docRef.id;
   } catch (error) {
