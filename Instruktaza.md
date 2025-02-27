@@ -17,12 +17,18 @@
 
 ## Uzstādīšanas instrukcija
 
-1. **Atkarību instalēšana**
+1. **Projekta lejupielāde**
+   ```bash
+   git clone https://github.com/EinsteinCodeRTK/TaskFlow-main.git
+   cd TaskFlow
+   ```
+
+2. **Atkarību instalēšana**
    ```bash
    npm install
    ```
 
-2. **Firebase konfigurācija**
+3. **Firebase konfigurācija**
    - Izveidojiet jaunu projektu [Firebase Console](https://console.firebase.google.com/)
    - Izveidojiet jaunu Web aplikāciju
    - Kopējiet Firebase konfigurācijas objektu
@@ -37,7 +43,7 @@
      REACT_APP_FIREBASE_APP_ID=your_app_id
      ```
 
-3. **Firebase Firestore uzstādīšana**
+4. **Firebase Firestore uzstādīšana**
    - Firebase Console izvēlieties "Firestore Database"
    - Izveidojiet jaunu datubāzi "Production Mode"
    - Iestatiet sekojošas kolekcijas:
