@@ -11,6 +11,7 @@ import Table from '../../components/Table/Table';
 import Team from '../Team/Team';
 import Payments from '../Payments/Payments';
 import Settings from '../Settings/Settings';
+import UserDropdown from '../../components/UserDropdown/UserDropdown';
 
 
 
@@ -234,7 +235,7 @@ const Main: React.FC = () => {
                             </svg>
                         </div>
 
-                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmFuZG9tJTIwcGVyc29ufGVufDB8fDB8fHww&w=1000&q=80" />
+                        <UserDropdown />
                     </div>
 
                 </div>

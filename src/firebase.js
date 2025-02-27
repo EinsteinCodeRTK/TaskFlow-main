@@ -127,7 +127,7 @@ export const createTask = async (taskData) => {
       ...taskData,
       createdAt: new Date(),
       status: taskData.status || "TODO",
-      dueDate: taskData.dueDate instanceof Date ? taskData.dueDate : new Date(taskData.dueDate)
+      dueDate: taskData.dueDate || ''
     };
 
     console.log('Firebase: Saving task to Firestore:', taskToSave);
@@ -164,7 +164,7 @@ export const getTasks = async (userId) => {
         description: data.description || '',
         priority: data.priority || 'MEDIUM',
         status: data.status || 'TODO',
-        dueDate: data.dueDate?.toDate() || new Date(),
+        dueDate: data.dueDate || '',
         time: data.time || '',
         assignedTo: data.assignedTo || [],
         createdBy: data.createdBy || '',

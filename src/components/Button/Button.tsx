@@ -6,28 +6,31 @@ interface Props {
     text: string
     normal: boolean
     width: string
-    onClick?: (e: MouseEvent<HTMLDivElement>) => void
+    onClick?: (e: MouseEvent<HTMLButtonElement>) => void
+    type?: 'button' | 'submit' | 'reset'
 }
 
-const Button: React.FC<Props> = ({ status, text, normal, width, onClick }) => {
+const Button: React.FC<Props> = ({ status, text, normal, width, onClick, type = 'button' }) => {
     return (
         <>
             {normal ? (
-                <div 
+                <button 
                     style={{width: `${width}`}} 
                     className={`button ${status}`}
                     onClick={onClick}
+                    type={type}
                 >
                     <p>{text}</p>
-                </div>
+                </button>
             ) : (
-                <div 
+                <button 
                     style={{width: `${width}`}} 
                     className="button grey"
                     onClick={onClick}
+                    type={type}
                 >
                     <p>{text}</p>
-                </div>
+                </button>
             )}
         </>
     )

@@ -1,19 +1,16 @@
 import './_login.scss'
-import React, { Dispatch, SetStateAction, useState } from 'react'
-
+import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 
 import Input from '../../components/Input/Input';
 import Button from '../../components/Button/Button';
 
-
 import Rectangletop from '../../assets/rectangle-top.png'
 import Rectanglebottom from '../../assets/rectangle-bottom.png'
-
 import AddImage from '../../assets/gallery-add.svg'
 import EmailVerify from '../../assets/email-verify.svg'
 import EmailReset from '../../assets/email-reset.svg'
-
-
 import Logo from '../../assets/TaskFlow_logo.png'
 import Facebook from '../../assets/facebook.png'
 import Google from '../../assets/google.png'
@@ -25,260 +22,329 @@ import Bankofamerica from '../../assets/bankofamerica.png'
 import Thales from '../../assets/thales.png'
 import Hulu from '../../assets/hulu.png'
 
+interface LoginProps {
+    initialMode?: 'login' | 'register';
+}
 
-const Login: React.FC = () => {
+const Login: React.FC<LoginProps> = ({ initialMode = 'login' }) => {
+    const navigate = useNavigate();
+    const { login, register } = useAuth();
+    
+    // State for form fields
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [name, setName] = useState("");
+    const [surname, setSurname] = useState("");
+    const [nickname, setNickname] = useState("");
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
-    const [value, changeValue] = useState<string>("");
+    const [isLoginMode, setIsLoginMode] = useState<boolean>(initialMode === 'login');
+    const [screen, setScreen] = useState<number>(1);
 
-    const [login, setLogin] = useState<boolean>(false)
+    // Atjaunojam isLoginMode, kad mainās initialMode
+    useEffect(() => {
+        setIsLoginMode(initialMode === 'login');
+    }, [initialMode]);
 
-    const [screen, setScreen] = useState<number>(1)
-
-    function changeScreen(up: boolean) {
-        if (up) {
-            setScreen(screen + 1)
-        } else {
-            setScreen(screen - 1)
+    const handleLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!email || !password) {
+            setError("Lūdzu, ievadiet e-pastu un paroli");
+            return;
         }
-    }
+
+        try {
+            setError("");
+            setLoading(true);
+            console.log("Mēģina pieslēgties ar:", email);
+            await login(email, password);
+            console.log("Pieslēgšanās veiksmīga, navigē uz /");
+            navigate('/', { replace: true });
+        } catch (error) {
+            console.error("Pieteikšanās kļūda:", error);
+            setError("Neizdevās pieslēgties. Pārbaudiet e-pastu un paroli.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleRegister = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!email || !password) {
+            setError("Lūdzu, ievadiet e-pastu un paroli");
+            return;
+        }
+
+        if (password.length < 6) {
+            setError("Parolei jābūt vismaz 6 simbolus garai");
+            return;
+        }
+
+        try {
+            setError("");
+            setLoading(true);
+            console.log("Mēģina reģistrēt ar:", email);
+            await register(email, password);
+            console.log("Reģistrācija veiksmīga, navigē uz /login");
+            navigate('/login', { replace: true });
+        } catch (error) {
+            console.error("Reģistrācijas kļūda:", error);
+            setError("Neizdevās izveidot kontu. Iespējams, e-pasts jau ir reģistrēts.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleCreateAccount = async () => {
+        if (!email || !password) {
+            setError("Lūdzu, aizpildiet visus obligātos laukus");
+            return;
+        }
+
+        if (password.length < 6) {
+            setError("Parolei jābūt vismaz 6 simbolus garai");
+            return;
+        }
+
+        try {
+            setError("");
+            setLoading(true);
+            console.log("Mēģina izveidot kontu ar:", email);
+            await register(email, password);
+            console.log("Konts izveidots veiksmīgi, navigē uz /");
+            navigate('/', { replace: true });
+        } catch (error) {
+            console.error("Reģistrācijas kļūda:", error);
+            setError("Neizdevās izveidot kontu. Pārbaudiet ievadītos datus.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const changeScreen = (up: boolean) => {
+        if (up) {
+            setScreen(screen + 1);
+        } else {
+            setScreen(screen - 1);
+        }
+    };
 
     let year: number = new Date().getFullYear();
 
     return (
         <div className='login'>
-
             <div className='col-l'>
-
-
-
-                {!login ? <div className='form'>
-
-
-                    {screen == 1 && <div>
-                        <img src={Logo} />
-                        <h2>Sign up</h2>
-
-                        <p>Luxafor solutions help boost individual productivity to skyrocket any business goals! Work Smarter. Earn More.</p>
-
-                        <div className='row'>
-                            <div style={{ marginRight: "9px" }} >
-                                <Input hint="Name" inputValue={value} onInputValueChange={changeValue} state="alert" error='Invalid name' type='text' field='input' />
-                            </div>
-                            <div style={{ marginLeft: "9px" }} >
-                                <Input hint="Surname" inputValue={value} onInputValueChange={changeValue} state="good" error='' type='text' field='input' />
-                            </div>
-
-                        </div>
-                        <div>
-                            <Input hint="Email" inputValue={value} onInputValueChange={changeValue} state="" error='' type='text' field='input' />
-                        </div>
-
-                        <div>
-                            <Input hint="Password" inputValue={value} onInputValueChange={changeValue} state="" error='' type='password' field='input' />
-                        </div>
-
-                        <div onClick={() => changeScreen(true)}>
-                            <Button status='' text='Continue' normal={true} width='inherit' />
-                        </div>
-
-                        <span>By continuing, you agree to our</span>&nbsp;<span> <a target='_blank' href='https://luxafor.com/terms/'>Terms & Privacy Policy.</a></span>
-
-                        <div className='divider'></div>
-
-                        <span>Already have an account?</span>&nbsp;<span onClick={() => setLogin(true)} className='switch'>Log in</span>
-
-                    </div>}
-
-
-
-                    {screen == 2 && <div>
-                        <img src={Logo} />
-                        <h2>Let’s get personalized</h2>
-
-                        <p>Add your profile picture and nickname so it’s easier for others to know who you are.</p>
-
-                        <div className='add-image'>
-                            <div className='circle'>
-                                <img src={AddImage} />
-                            </div>
-
-                            <p>Profile picture</p>
-
-                        </div>
-                        <div>
-                            <Input hint="Nickname" inputValue={value} onInputValueChange={changeValue} state="" error='' type='text' field='input' />
-                        </div>
-
-                        <div onClick={() => changeScreen(true)}>
-                            <Button status='' text='Continue' normal={true} width='inherit' />
-                        </div>
-
-                    </div>}
-
-                    {screen == 3 && <div>
-                        <img src={Logo} />
-                        <h2>Verify your email</h2>
-
-                        <p>You will need to verify your email to complete the sign up process!</p>
-
-                        <img src={EmailVerify} />
-
-                        <div>
-                            <span>An email has been sent to </span><span className='email'>sam.smith@twitter.com</span><span> with a link to verify your account. If you have not received it after a few minutes, please check your spam folder.</span>
-                        </div>
-
-                        <div className='divider'></div>
-
-                        <a href="https://taskflow.io">Return to homepage</a>
-
-                    </div>}
-
-                </div>
-
-                    :
-
+                {!isLoginMode ? (
                     <div className='form'>
-
-
-                        {screen == 1 && <div>
-                            <img src={Logo} />
-                            <h2>Log in</h2>
-
-                            <p>Luxafor solutions help boost individual productivity to skyrocket any business goals! Work Smarter. Earn More.</p>
-
+                        {screen === 1 && (
                             <div>
-                                <Input hint="Email" inputValue={value} onInputValueChange={changeValue} state="" error='' type='text' field='input' />
-                            </div>
+                                <img src={Logo} alt="TaskFlow Logo" />
+                                <h2>Reģistrēties</h2>
+                                {error && <div className="error-message">{error}</div>}
 
+                                <p>TaskFlow palīdz uzlabot produktivitāti un sasniegt biznesa mērķus! Strādā gudrāk.</p>
+
+                                <form onSubmit={(e) => {
+                                    e.preventDefault();
+                                    handleCreateAccount();
+                                }}>
+                                    <div className='row'>
+                                        <div style={{ marginRight: "9px" }}>
+                                            <Input 
+                                                hint="Vārds" 
+                                                inputValue={name} 
+                                                onInputValueChange={setName} 
+                                                state={error ? "error" : ""} 
+                                                error={error}
+                                                type='text' 
+                                                field='input'
+                                            />
+                                        </div>
+                                        <div style={{ marginLeft: "9px" }}>
+                                            <Input 
+                                                hint="Uzvārds" 
+                                                inputValue={surname} 
+                                                onInputValueChange={setSurname} 
+                                                state={error ? "error" : ""} 
+                                                error={error}
+                                                type='text' 
+                                                field='input'
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <Input 
+                                            hint="E-pasts" 
+                                            inputValue={email} 
+                                            onInputValueChange={setEmail} 
+                                            state={error ? "error" : ""} 
+                                            error={error}
+                                            type='email' 
+                                            field='input'
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <Input 
+                                            hint="Parole" 
+                                            inputValue={password} 
+                                            onInputValueChange={setPassword} 
+                                            state={error ? "error" : ""} 
+                                            error={error}
+                                            type='password' 
+                                            field='input'
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <Button 
+                                            type="submit"
+                                            status={loading ? 'loading' : ''} 
+                                            text='Turpināt' 
+                                            normal={true} 
+                                            width='inherit'
+                                        />
+                                    </div>
+                                </form>
+
+                                <div className='divider'></div>
+
+                                <span>Jau ir konts?</span>&nbsp;
+                                <span onClick={() => setIsLoginMode(true)} className='switch'>Pieslēgties</span>
+                            </div>
+                        )}
+
+                        {screen === 2 && (
                             <div>
-                                <Input hint="Password" inputValue={value} onInputValueChange={changeValue} state="" error='' type='password' field='input' />
+                                <img src={Logo} alt="TaskFlow Logo" />
+                                <h2>Personalizēsim profilu</h2>
+
+                                <p>Pievienojiet profila attēlu un segvārdu.</p>
+
+                                <div className='add-image'>
+                                    <div className='circle'>
+                                        <img src={AddImage} alt="Add profile picture" />
+                                    </div>
+                                    <p>Profila attēls</p>
+                                </div>
+
+                                <div>
+                                    <Input 
+                                        hint="Segvārds" 
+                                        inputValue={nickname} 
+                                        onInputValueChange={setNickname} 
+                                        state="" 
+                                        error=""
+                                        type='text' 
+                                        field='input'
+                                    />
+                                </div>
+
+                                <div onClick={() => navigate('/')}>
+                                    <Button 
+                                        status='' 
+                                        text='Pabeigt' 
+                                        normal={true} 
+                                        width='inherit'
+                                    />
+                                </div>
                             </div>
-
-
-                            <p onClick={() => changeScreen(true)} className='forgot-p'>Forgot password?</p>
-
-                            <Button status='' text='Continue' normal={true} width='inherit' />
-
-
-
-
-
-                            <div className='divider'></div>
-
-
-
-                            <span>Don't have an account?</span>&nbsp;<span onClick={() => setLogin(false)} className='switch'>Sign up</span>
-                        </div>
-                        }
-
-                        {screen == 2 && <div>
-                            <img src={Logo} />
-                            <h2>Forgot password?</h2>
-
-                            <p>Enter your email address and we’ll send you a secure link to reset your password.</p>
-
-                            <div>
-                                <Input hint="Email" inputValue={value} onInputValueChange={changeValue} state="" error='' type='text' field='input' />
-                            </div>
-
-
-                            <div onClick={() => changeScreen(true)}>
-                                <Button status='' text='Continue' normal={true} width='inherit' />
-                            </div>
-
-                            <div onClick={() => changeScreen(false)}>
-                                <Button status='' text='Back' normal={false} width='inherit' />
-                            </div>
-
-                        </div>
-                        }
-
-
-
-                        {screen == 3 && <div>
-                            <img src={Logo} />
-                            <h2>Check your email</h2>
-
-                            <p>You will need to verify your email to reset your password!</p>
-
-                            <img src={EmailReset} />
-
-                            <div>
-                                <span>An email has been sent to </span><span className='email'>sam.smith@twitter.com</span><span>  with a password reset link. If you have not received it after a few minutes, please check your spam folder.</span>
-                            </div>
-
-                            <div className='divider'></div>
-
-                            <a href="https://taskflow.io">Return to homepage</a>
-
-                        </div>}
-
-
+                        )}
                     </div>
-                }
+                ) : (
+                    <div className='form'>
+                        <div>
+                            <img src={Logo} alt="TaskFlow Logo" />
+                            <h2>Pieslēgties</h2>
+                            {error && <div className="error-message">{error}</div>}
 
+                            <p>Pieslēdzieties savam TaskFlow kontam.</p>
 
+                            <form onSubmit={handleLogin}>
+                                <div>
+                                    <Input 
+                                        hint="E-pasts" 
+                                        inputValue={email} 
+                                        onInputValueChange={setEmail} 
+                                        state={error ? "error" : ""} 
+                                        error={error}
+                                        type='email' 
+                                        field='input'
+                                    />
+                                </div>
+
+                                <div>
+                                    <Input 
+                                        hint="Parole" 
+                                        inputValue={password} 
+                                        onInputValueChange={setPassword} 
+                                        state={error ? "error" : ""} 
+                                        error={error}
+                                        type='password' 
+                                        field='input'
+                                    />
+                                </div>
+
+                                <div>
+                                    <Button 
+                                        type="submit"
+                                        status={loading ? 'loading' : ''} 
+                                        text='Pieslēgties' 
+                                        normal={true} 
+                                        width='inherit'
+                                    />
+                                </div>
+                            </form>
+
+                            <div className='divider'></div>
+
+                            <span>Nav konta?</span>&nbsp;
+                            <span onClick={() => setIsLoginMode(false)} className='switch'>Reģistrēties</span>
+                        </div>
+                    </div>
+                )}
 
                 <div className='ltd'>
-                    <span>©</span>&nbsp;<span>{year}</span>&nbsp;<span> Greynut LTD</span>
+                    <span>©</span>&nbsp;<span>{year}</span>&nbsp;<span>TaskFlow</span>
                 </div>
-
-
             </div>
 
-
-
-
-
-
-
-
             <div className='col-r'>
-
-                <img className='rectangle-top' src={Rectangletop} />
+                <img className='rectangle-top' src={Rectangletop} alt="" />
 
                 <div className='top'>
                     <p>
-                        “I can now tell everyone when I’m busy or free. It's been very effective. I use the red signal sparingly and no one interrupted me so far. My next goal is to play with the Webhook API :)”
+                        "TaskFlow palīdz man efektīvi organizēt darbu un komunicēt ar komandu. Tas ir vienkāršs, bet ļoti efektīvs rīks."
                     </p>
-
                     <p>
-                        MICHELE BERTOLI
+                        JĀNIS BĒRZIŅŠ
                     </p>
-
                     <p>
-                        Front End Engineer at Facebook
+                        Projektu vadītājs
                     </p>
-
-                    <img src={Facebook} />
-
+                    <img src={Facebook} alt="Facebook logo" />
                 </div>
 
-
-                <img className='rectangle-bottom' src={Rectanglebottom} />
+                <img className='rectangle-bottom' src={Rectanglebottom} alt="" />
 
                 <div className='bottom'>
-                    <p>Already used in the offices of:</p>
-
+                    <p>Jau izmanto:</p>
                     <div className='icons'>
-                        <img src={Google} />
-                        <img src={Microsoft} />
-                        <img src={Logitech} />
-                        <img src={Youtube} />
-                        <img src={Etsy} />
-                        <img src={Bankofamerica} />
-                        <img src={Thales} />
-                        <img src={Hulu} />
+                        <img src={Google} alt="Google" />
+                        <img src={Microsoft} alt="Microsoft" />
+                        <img src={Logitech} alt="Logitech" />
+                        <img src={Youtube} alt="Youtube" />
+                        <img src={Etsy} alt="Etsy" />
+                        <img src={Bankofamerica} alt="Bank of America" />
+                        <img src={Thales} alt="Thales" />
+                        <img src={Hulu} alt="Hulu" />
                     </div>
                 </div>
-
-
-
-
             </div>
-
         </div>
-    )
-}
+    );
+};
 
 export default Login;
