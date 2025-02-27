@@ -199,11 +199,15 @@ export const deleteTask = async (taskId) => {
 export const createGroup = async (groupData) => {
   try {
     const docRef = await addDoc(collection(db, "groups"), {
-      ...groupData,
-      createdAt: new Date()
+      name: groupData.name,
+      members: [groupData.createdBy],
+      createdBy: groupData.createdBy,
+      createdAt: new Date(),
+      memberCount: 1
     });
     return docRef.id;
   } catch (error) {
+    console.error("Error creating group:", error);
     throw error;
   }
 };
@@ -214,9 +218,14 @@ export const getGroups = async (userId) => {
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map(doc => ({
       id: doc.id,
-      ...doc.data()
+      name: doc.data().name,
+      members: doc.data().members || [],
+      createdBy: doc.data().createdBy,
+      createdAt: doc.data().createdAt,
+      memberCount: doc.data().members?.length || 0
     }));
   } catch (error) {
+    console.error("Error fetching groups:", error);
     throw error;
   }
 };
@@ -234,6 +243,44 @@ export const deleteGroup = async (groupId) => {
   try {
     await deleteDoc(doc(db, "groups", groupId));
   } catch (error) {
+    console.error("Error deleting group:", error);
+    throw error;
+  }
+};
+
+// Member functions
+export const getMembers = async () => {
+  try {
+    const querySnapshot = await getDocs(collection(db, "users"));
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      email: doc.data().email,
+      displayName: doc.data().displayName,
+      role: doc.data().role,
+      groups: doc.data().groups || [],
+      createdAt: doc.data().createdAt
+    }));
+  } catch (error) {
+    console.error("Error fetching members:", error);
+    throw error;
+  }
+};
+
+export const updateMember = async (userId, userData) => {
+  try {
+    const userRef = doc(db, "users", userId);
+    await updateDoc(userRef, userData);
+  } catch (error) {
+    console.error("Error updating member:", error);
+    throw error;
+  }
+};
+
+export const deleteMember = async (userId) => {
+  try {
+    await deleteDoc(doc(db, "users", userId));
+  } catch (error) {
+    console.error("Error deleting member:", error);
     throw error;
   }
 };

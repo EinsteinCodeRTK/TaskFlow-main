@@ -12,6 +12,7 @@ import Team from '../Team/Team';
 import Payments from '../Payments/Payments';
 import Settings from '../Settings/Settings';
 import UserDropdown from '../../components/UserDropdown/UserDropdown';
+import CreateGroupModal from '../../components/CreateGroupModal/CreateGroupModal';
 
 
 
@@ -325,11 +326,12 @@ const Main: React.FC = () => {
             )}
             
             {page == 1 && pageTab == 1 && (
-                <PaymentModal 
+                <CreateGroupModal 
                     open={open} 
                     setOpen={setOpen} 
-                    task="Create group" 
-                    text="E.g. you can organise people by their position or department." 
+                    onGroupCreated={() => {
+                        window.location.reload();
+                    }}
                 />
             )}
             

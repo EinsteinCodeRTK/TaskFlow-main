@@ -3,9 +3,14 @@ import "./_team.scss"
 import React, { Dispatch, SetStateAction, useState, useEffect } from 'react'
 import Table from "../../components/Table/Table";
 import Empty from "../../components/Empty/Empty";
+import CreateGroupModal from "../../components/CreateGroupModal/CreateGroupModal";
+import EditGroupModal from "../../components/EditGroupModal/EditGroupModal";
+import EditMemberModal from '../../components/EditMemberModal/EditMemberModal';
 import { useAuth } from "../../contexts/AuthContext";
-import { getGroups } from "../../firebase";
-
+import { getGroups, getMembers, deleteGroup, deleteMember } from "../../firebase";
+import { ReactComponent as DeleteIcon } from "../../assets/delete.svg";
+import { ReactComponent as EditIcon } from "../../assets/edit.svg";
+import { Member, Group, TableStructure } from "../../types";
 
 interface Props {
     open: boolean
@@ -15,73 +20,164 @@ interface Props {
 
 const Team: React.FC<Props> = ({ open, setOpen, pageTab }) => {
     const { currentUser } = useAuth();
-    const [groups, setGroups] = useState<any[]>([]);
+    const [groups, setGroups] = useState<Group[]>([]);
+    const [members, setMembers] = useState<Member[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [showCreateGroupModal, setShowCreateGroupModal] = useState(false);
+    const [showEditGroupModal, setShowEditGroupModal] = useState(false);
+    const [showEditMemberModal, setShowEditMemberModal] = useState(false);
+    const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
+    const [selectedMember, setSelectedMember] = useState<Member | null>(null);
+
+    const fetchGroups = async () => {
+        if (!currentUser) return;
+        
+        try {
+            setLoading(true);
+            const fetchedGroups = await getGroups(currentUser.email);
+            setGroups(fetchedGroups.map(group => ({
+                id: group.id,
+                name: group.name,
+                members: group.members,
+                createdBy: group.createdBy,
+                createdAt: group.createdAt,
+                memberCount: group.members.length
+            })));
+        } catch (error) {
+            console.error("Error fetching groups:", error);
+            setError("Failed to fetch groups");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchMembers = async () => {
+        if (!currentUser) return;
+        
+        try {
+            const fetchedMembers = await getMembers();
+            setMembers(fetchedMembers);
+        } catch (err) {
+            console.error('Error fetching members:', err);
+            setError('Neizdevās ielādēt dalībniekus');
+        }
+    };
 
     useEffect(() => {
-        const fetchGroups = async () => {
-            if (!currentUser) return;
-            
-            try {
-                const fetchedGroups = await getGroups(currentUser.uid);
-                setGroups(fetchedGroups);
-            } catch (err) {
-                console.error('Error fetching groups:', err);
-                setError('Neizdevās ielādēt grupas');
-            } finally {
-                setLoading(false);
+        const loadData = async () => {
+            setLoading(true);
+            if (pageTab === 0) {
+                await fetchMembers();
+            } else {
+                await fetchGroups();
             }
+            setLoading(false);
         };
 
-        fetchGroups();
-    }, [currentUser]);
+        loadData();
+    }, [currentUser, pageTab]);
 
-    const structure = {
-        type: "Members",
-        head: ["", "NAME", "ROLE", "GROUP", "CREATED", "", ""],
-        body: [
-            {
-                img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTCcXzKAsVs-YLiCFyVzHUzDz6iHWGWyNIIGg&usqp=CAU",
-                name: "Penn Jillette",
-                email: "penn.jillette@gmail.com",
-                role: "Member",
-                group: "Magician",
-                created: "21-09-2022 16:35",
-                icon_1: "edit",
-                icon_2: "delete",
-                members: -1,
-                date: "Sep 1, 2023",
-                plan: "Mid",
-                amount: "100.00 €",
-                status: true
-            }
-        ]
-    }
+    const handleDeleteGroup = async (groupId: string) => {
+        try {
+            await deleteGroup(groupId);
+            await fetchGroups();
+        } catch (err) {
+            console.error('Error deleting group:', err);
+            setError('Neizdevās dzēst grupu');
+        }
+    };
 
+    const handleDeleteMember = async (memberId: string) => {
+        try {
+            await deleteMember(memberId);
+            await fetchMembers();
+        } catch (err) {
+            console.error('Error deleting member:', err);
+            setError('Neizdevās dzēst dalībnieku');
+        }
+    };
 
+    const handleEditGroup = (groupId: string) => {
+        const group = groups.find(g => g.id === groupId);
+        if (group) {
+            setSelectedGroup(group);
+            setShowEditGroupModal(true);
+        }
+    };
 
-    const structureG = {
+    const handleEditMember = (memberId: string) => {
+        const member = members.find(m => m.id === memberId);
+        if (member) {
+            setSelectedMember(member);
+            setShowEditMemberModal(true);
+        }
+    };
+
+    const handleMemberUpdated = () => {
+        fetchMembers();
+    };
+
+    const groupsStructure: TableStructure = {
         type: "Groups",
-        head: ["", "NAME", "", "", "MEMBERS", "ACTIONS", "CREATED", "", ""],
+        head: ["Name", "Members", "Created At", "Actions"],
         body: groups.map(group => ({
             img: "",
             name: group.name,
-            email: "",
-            role: "",
-            group: "",
-            created: new Date(group.createdAt.seconds * 1000).toLocaleDateString('lv-LV'),
-            icon_1: "edit",
-            icon_2: "delete",
             members: group.members.length,
-            date: "Sep 1, 2023",
-            plan: "Mid",
-            amount: "100.00 €",
-            status: true,
-            id: group.id,
-            memberEmails: group.members
+            created: new Date(group.createdAt.seconds * 1000).toLocaleDateString(),
+            actions: (
+                <div className="group-actions">
+                    <button
+                        className="icon-button edit"
+                        onClick={() => handleEditGroup(group.id)}
+                        title="Rediģēt grupu"
+                    >
+                        <EditIcon />
+                    </button>
+                    <button
+                        className="icon-button delete"
+                        onClick={() => handleDeleteGroup(group.id)}
+                        title="Dzēst grupu"
+                    >
+                        <DeleteIcon />
+                    </button>
+                </div>
+            ),
+            id: group.id
         }))
-    }
+    };
+
+    const membersStructure: TableStructure = {
+        type: "Members",
+        head: ["Name", "Email", "Role", "Groups", "Actions"],
+        body: members.map(member => ({
+            img: "",
+            name: member.displayName,
+            email: member.email,
+            role: member.role,
+            groups: member.groups.length,
+            actions: (
+                <div className="member-actions">
+                    <button
+                        className="icon-button edit"
+                        onClick={() => handleEditMember(member.id)}
+                        title="Rediģēt dalībnieku"
+                    >
+                        <EditIcon />
+                    </button>
+                    <button
+                        className="icon-button delete"
+                        onClick={() => handleDeleteMember(member.id)}
+                        title="Dzēst dalībnieku"
+                    >
+                        <DeleteIcon />
+                    </button>
+                </div>
+            ),
+            id: member.id
+        }))
+    };
 
     if (loading) {
         return <div>Ielādē...</div>;
@@ -92,28 +188,50 @@ const Team: React.FC<Props> = ({ open, setOpen, pageTab }) => {
     }
 
     return (
-        <div>
-
-
-            {pageTab == 0 &&
-                <Table open={open} setOpen={setOpen} structure={structure} />
-            }
-
-            {pageTab == 1 &&
+        <div className="team-container">
+            {pageTab === 0 ? (
                 <>
-                    {groups.length === 0 ? (
-                        <Empty 
-                            header="Jums nav nevienas grupas" 
-                            text="Grupas ļauj organizēt cilvēkus pēc pozīcijas, atrašanās vietas un citiem kritērijiem." 
-                        />
+                    {members.length === 0 ? (
+                        <div className="no-data">No members found</div>
                     ) : (
-                        <Table open={open} setOpen={setOpen} structure={structureG} />
+                        <Table 
+                            structure={membersStructure} 
+                            open={open} 
+                            setOpen={setOpen}
+                        />
                     )}
                 </>
-            }
-
+            ) : (
+                <>
+                    {groups.length === 0 ? (
+                        <div className="no-data">No groups found</div>
+                    ) : (
+                        <Table 
+                            structure={groupsStructure} 
+                            open={open} 
+                            setOpen={setOpen}
+                        />
+                    )}
+                </>
+            )}
+            {selectedMember && (
+                <EditMemberModal
+                    open={showEditMemberModal}
+                    setOpen={setShowEditMemberModal}
+                    member={selectedMember}
+                    onMemberUpdated={handleMemberUpdated}
+                />
+            )}
+            {selectedGroup && (
+                <EditGroupModal
+                    open={showEditGroupModal}
+                    setOpen={setShowEditGroupModal}
+                    group={selectedGroup}
+                    onGroupUpdated={fetchGroups}
+                />
+            )}
         </div>
-    )
-}
+    );
+};
 
 export default Team;
