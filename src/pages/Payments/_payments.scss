@@ -1,0 +1,144 @@
+@import "../../components/colors";
+@import "../../components/variables";
+
+
+.payments {
+
+    width: 100%;
+
+
+    .row {
+        display: flex;
+        margin: 20px 25px;
+
+        .card {
+            background-color: $neutral-100;
+            border: solid 1px $neutral-500;
+            border-radius: $radius-m;
+            width: 100%;
+            margin: 0 5px;
+
+            padding: 20px 20px;
+
+            text-align: left;
+
+            p {
+                color: $primary-grey-100;
+                font-size: $font-size-3;
+                font-weight: $font-weight-semi;
+
+                margin: 0;
+            }
+
+            h2 {
+                font-size: $font-size-6;
+                margin: 0;
+            }
+
+        }
+
+
+
+
+
+        .card.payment-method {
+
+            background-color: $neutral-100;
+            border: solid 1px $neutral-500;
+            border-radius: $radius-m;
+            width: 100%;
+            margin: 0 5px;
+
+            text-align: left;
+
+            p {
+                color: $primary-grey-100;
+                font-size: $font-size-3;
+                font-weight: $font-weight-semi;
+
+            }
+
+            h2 {
+                font-size: $font-size-5;
+                margin-right: 10px;
+            }
+
+
+
+
+            .holder-name {
+
+                display: flex;
+                width: fit-content;
+
+
+                .primary {
+                    width: fit-content;
+                    display: block;
+                    margin: auto;
+                    background-color: $primary-green-100;
+                    border: solid 1px $primary-green-300;
+                    border-radius: $radius-s;
+
+                    p {
+                        padding: 4px 8px;
+                        margin: 0;
+                        color: $primary-green-900;
+                        font-weight: $font-weight-semi;
+                        font-size: $font-size-2;
+                    }
+                }
+
+            }
+
+            .card-info {
+                display: flex;
+                justify-content: center;
+                width: fit-content;
+                margin-top: 10px;
+
+                h2{
+                    font-size: $font-size-4;
+                }
+
+                p {
+                    font-weight: $font-weight-regular;
+                }
+
+
+                img {
+                    width: 70px;
+                    object-fit: contain;
+                    margin-right: 10px;
+                  
+                }
+            }
+        }
+
+
+
+        .card.payment-plan{
+            .small{
+                font-size: $font-size-2;
+                font-weight: $font-weight-regular;
+            }
+
+            .button{
+                p{
+                    color: $neutral-100;
+                }
+
+                display: block;
+                margin: auto;
+                margin-left: 0;
+                margin-top: 10px;
+            }
+        }
+
+
+    }
+
+
+
+
+}

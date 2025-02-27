@@ -1,0 +1,53 @@
+@import "../colors";
+@import "../variables";
+
+.role {
+
+    text-align: left;
+
+    .row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+
+        h2 {
+            font-size: $font-size-3;
+            font-weight: $font-weight-semi;
+            margin-bottom: 0;
+        }
+
+        p {
+            color: $primary-grey-100;
+            font-weight: $font-weight-regular;
+            margin-top: 0;
+        }
+
+        .checkbox {
+            width: 10px;
+            max-width: 10px;
+            min-width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: solid 8px $neutral-500;
+            background-color: $neutral-500;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+    }
+
+
+
+
+    .row:hover{
+
+        .checkbox {
+
+            border: solid 8px $primary-green-500;
+            background-color: $neutral-100;
+
+            margin-right: 10px;
+        }
+    }
+}

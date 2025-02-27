@@ -1,0 +1,63 @@
+@import '../variables';
+@import '../colors';
+
+
+.button {
+    font-size: $font-size-3;
+    font-weight: $font-weight-semi;
+    background-color: $primary-green-500;
+    transition: 0.5s;
+
+    cursor: pointer;
+
+    width: inherit;
+    border-radius: $radius-l;
+    margin: auto;
+    margin-top: 20px;
+    display: block;
+
+
+    
+
+    p {
+        padding: $padding-m $padding-m;
+        color: $neutral-100;
+    }
+
+}
+
+.button.grey {
+    background-color: $neutral-500;
+    p{
+         color: $primary-grey-900;
+    }
+}
+
+.button.grey:hover {
+    background-color: $neutral-700;
+}
+
+
+.button:hover {
+    background-color: $primary-green-700;
+}
+
+
+
+.button.inactive {
+    background-color: $neutral-900;
+    cursor: auto;
+}
+
+
+
+
+
+.button.alert {
+    background-color: $primary-red-500;
+}
+
+.button.alert:hover {
+    background-color: $primary-red-700;
+}
+

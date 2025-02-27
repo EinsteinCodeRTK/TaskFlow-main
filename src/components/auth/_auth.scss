@@ -1,0 +1,61 @@
+@import '../variables';
+@import '../colors';
+
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: $neutral-300;
+  padding: 20px;
+}
+
+.auth-card {
+  background-color: $neutral-100;
+  padding: 40px;
+  border-radius: $radius-m;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  h2 {
+    text-align: center;
+    color: $neutral-900;
+    margin-bottom: 30px;
+    font-size: $font-size-6;
+  }
+
+  .error-message {
+    background-color: rgba($error-500, 0.1);
+    color: $error-500;
+    padding: 10px;
+    border-radius: $radius-s;
+    margin-bottom: 20px;
+    font-size: $font-size-2;
+    text-align: center;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .auth-links {
+    margin-top: 20px;
+    text-align: center;
+    font-size: $font-size-2;
+
+    p {
+      color: $neutral-700;
+
+      span {
+        color: $primary-green-500;
+        cursor: pointer;
+        font-weight: $font-weight-semi;
+        
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+} 

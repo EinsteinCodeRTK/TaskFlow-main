@@ -1,0 +1,13 @@
+@import '../../components/variables';
+@import '../../components/colors';
+
+
+.tasks {
+    background-color: $neutral-300;
+    width: inherit;
+    height: 100vh;
+    position: relative;
+    overflow-y: auto;
+
+
+}

@@ -1,0 +1,45 @@
+@import '../../colors';
+@import '../../variables';
+
+
+.filter-dropdown.dropdown {
+
+
+
+        background-color: $neutral-100;
+        border-radius: $radius-s;
+        border: solid $primary-grey-100 1px;
+        text-align: center;
+
+        .filter-button{
+            display: flex;
+            align-items: center;
+
+            p {margin-left: 8px;}
+
+            svg{
+                margin: 0 8px;
+            }
+        }
+        
+    
+
+    .drop {
+        width: 120px;
+        left: -28px;
+    }
+
+    .row {
+  
+
+       p{
+          text-align: center;
+          margin-right: 5px;
+          font-weight: $font-weight-semi;
+          font-size: $font-size-2;
+       }
+     
+
+
+    }
+}

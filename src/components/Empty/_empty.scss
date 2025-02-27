@@ -1,0 +1,19 @@
+@import "../colors";
+@import "../variables";
+
+
+.empty{
+
+    background-color: $neutral-100;
+    padding: 20px 20px;
+    display: block;
+    margin: auto 30px;
+    width: inherit;
+    border-radius: $radius-m;
+    border: solid 1px $neutral-500;
+
+
+    h2{
+        font-size: $font-size-5;
+    }
+}

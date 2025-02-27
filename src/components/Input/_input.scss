@@ -1,0 +1,86 @@
+@import '../variables';
+@import '../colors';
+
+
+
+.input {
+
+
+   position: relative;
+   margin-left: -8px;
+
+    p {
+        color: $primary-red-500;
+        margin-top: 4px;
+        font-size: $font-size-2;
+        text-align: left;
+
+    }
+
+    svg {
+   
+        color: $primary-red-500;
+        margin: 1px 5px;
+        float: left;
+    }
+
+    .icon{
+        color: black;
+        position: absolute;
+        right: 5px;
+        top: 20px;
+        cursor: pointer;
+    }
+
+
+}
+
+
+input {
+    background-color: $neutral-500;
+    border-radius: $radius-s;
+    border: solid $neutral-500 1px;
+    padding: $padding-m;
+    width: 100%;
+    box-sizing:border-box;
+    margin: 5px;
+
+    font-weight: $font-weight-regular;
+}
+
+
+
+textarea {
+    background-color: $neutral-500;
+    border-radius: $radius-s;
+    border: solid $neutral-500 1px;
+    padding: $padding-m;
+    width: 100%;
+    height: 120px;
+    box-sizing:border-box;
+    margin: 5px;
+    resize: none;
+    font-family: inherit;
+    font-weight: $font-weight-regular;
+
+}
+
+input:focus {
+    outline: none;
+    border: solid $primary-grey-100 1px;
+}
+
+textarea:focus {
+    outline: none;
+    border: solid $primary-grey-100 1px;
+}
+
+
+input.alert {
+    border: solid $primary-red-500 1px;
+}
+
+
+input.good {
+    border: solid $primary-green-500 1px;
+}

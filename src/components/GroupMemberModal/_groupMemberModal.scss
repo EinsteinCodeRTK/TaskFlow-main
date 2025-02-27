@@ -1,0 +1,77 @@
+@import '../colors';
+@import '../variables';
+
+.modal-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba($primary-grey-900, 0.5);
+}
+
+.group-member-modal {
+  position: relative;
+  background-color: $neutral-100;
+  border-radius: $radius-m;
+  padding: 24px;
+  width: 90%;
+  max-width: 500px;
+  z-index: 1001;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+
+    h2 {
+      margin: 0;
+      color: $primary-grey-900;
+      font-size: $font-size-6;
+    }
+
+    .close-button {
+      background: none;
+      border: none;
+      padding: 4px;
+      cursor: pointer;
+      color: $primary-grey-300;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: $primary-grey-900;
+      }
+    }
+  }
+
+  .form-group {
+    margin-bottom: 24px;
+
+    label {
+      display: block;
+      color: $primary-grey-700;
+      font-size: $font-size-2;
+      margin-bottom: 8px;
+    }
+  }
+
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+} 

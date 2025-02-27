@@ -1,0 +1,119 @@
+@import '../variables';
+@import '../colors';
+
+
+
+.dropdown {
+
+    background-color: $neutral-500;
+    border-radius: $radius-s;
+    border: solid $neutral-500 1px;
+    height: 36px;
+    width: 100%;
+    margin: 5px 0;
+    padding-top: 3px;
+
+    font-weight: $font-weight-regular;
+    position: relative;
+    cursor: pointer;
+
+    img {
+        position: absolute;
+        right: 8px;
+        top: 8px;
+
+
+        -webkit-transition: transform 0.3s ease-in-out;
+        -moz-transition: transform 0.3s ease-in-out;
+        -ms-transition: transform 0.3s ease-in-out;
+        -o-transition: transform 0.3s ease-in-out;
+        transition: transform 0.3s ease-in-out;
+    }
+
+
+    p {
+        margin-top: 8px;
+        margin-left: 20px;
+    }
+
+
+    img.rotate {
+        transform: rotate(180deg);
+    }
+
+
+
+
+
+    .row {
+
+        padding: 8px;
+        border-radius: 11px;
+        display: flex;
+        align-items: center;
+        z-index: 2;
+
+        p {
+            margin: 0;
+        }
+
+        .icon {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin: 0 10px;
+        }
+
+        .GREEN {
+            color: $primary-green-500;
+        }
+
+        .GREEN.icon {
+            background-color: $primary-green-500;
+        }
+
+        .YELLOW {
+            color: $accent-yellow-500;
+        }
+
+        .YELLOW.icon {
+            background-color: $accent-yellow-500;
+        }
+
+        .RED {
+            color: $primary-red-500;
+        }
+
+        .RED.icon {
+            background-color: $primary-red-500;
+        }
+    }
+
+    .row:hover {
+        cursor: pointer;
+        background-color: $neutral-500;
+    }
+
+
+}
+
+
+
+
+
+
+.drop {
+    display: none;
+    flex-direction: column;
+    background-color: $neutral-100;
+    border-radius: $radius-s;
+    border: solid $neutral-500 1px;
+
+    position: absolute;
+    top: 42px;
+    width: 300px;
+
+    z-index: 2;
+
+
+}
